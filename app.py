@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 import json
 import pandas as pd
 import re
@@ -7,6 +8,7 @@ import pickle
 import bz2file as bz2
 
 app = Flask(__name__)
+CORS(app, support_credentials=True)
 
 mp = bz2.BZ2File('model.pbz2', 'rb')
 mp = pickle.load(mp)
@@ -14,7 +16,7 @@ mp = pickle.load(mp)
 td = bz2.BZ2File('vectorizer.pbz2', 'rb')
 td = pickle.load(td)
 
-
+@cross_origin(supports_credentials=True)
 def  clean_text(text):
 
     text =  text.lower()
@@ -44,7 +46,7 @@ def  clean_text(text):
     text = re.sub('\S*\d\S*\s*','', text)
     return text
 
-
+@cross_origin(supports_credentials=True)
 def make_test_predictions(df):
     df.comment_text = df.comment_text.apply(clean_text)
     X_test = df.comment_text
@@ -56,7 +58,9 @@ def make_test_predictions(df):
     else :
        return 0
 
+
 @app.route("/", methods=['POST'])
+@cross_origin(supports_credentials=True)
 def sanitize(): 
     val = request.get_json()
     val = json.loads(val['body'])
@@ -73,6 +77,7 @@ def sanitize():
         return(jsonify({"msg": 'Pos'}))
 
 @app.route("/test",methods=['GET'])
+@cross_origin(supports_credentials=True)
 def test():
     return(jsonify({"msg":"hello flask"}))
 
