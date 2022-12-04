@@ -16,7 +16,7 @@ mp = pickle.load(mp)
 td = bz2.BZ2File('vectorizer.pbz2', 'rb')
 td = pickle.load(td)
 
-@cross_origin(supports_credentials=True)
+
 def  clean_text(text):
 
     text =  text.lower()
@@ -46,7 +46,7 @@ def  clean_text(text):
     text = re.sub('\S*\d\S*\s*','', text)
     return text
 
-@cross_origin(supports_credentials=True)
+
 def make_test_predictions(df):
     df.comment_text = df.comment_text.apply(clean_text)
     X_test = df.comment_text
